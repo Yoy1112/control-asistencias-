@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Sistema de Control de Atrasos Escolares</title>
+    <link rel="icon" type="image/png" href="logo.png.Png">
+    <style>
+        /* Estilos generales */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        /* Encabezado */
+        header {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            padding: 24px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+            margin-bottom: 24px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        header p {
+            color: #bfdbfe;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .fecha-badge {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 12px;
+            text-align: right;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Tarjetas de Estadísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .card-stat {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            padding: 18px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .stat-title {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        /* Contenido Principal (2 columnas) */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 850px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section-box {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Formulario */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            color: #ffffff;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            font-weight: 700;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.1s, background 0.2s;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* Tabla */
+        .btn-action {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: #059669;
+        }
+
+        .btn-danger {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-danger:hover {
+            background-color: rgba(239, 68, 68, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+
+        th {
+            background-color: #0f172a;
+            color: #94a3b8;
+            text-align: left;
+            padding: 12px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #334155;
+            font-size: 0.9rem;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge-hora {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .badge-motivo {
+            background-color: #334155;
+            color: #cbd5e1;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* Modal Ticket */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+
+        .modal-ticket {
+            background-color: #ffffff;
+            color: #0f172a;
+            padding: 24px;
+            border-radius: 16px;
+            max-width: 320px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .modal-ticket h3 {
+            color: #1e3a8a;
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .ticket-info {
+            text-align: left;
+            margin: 16px 0;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            border-top: 1px dashed #cbd5e1;
+            border-bottom: 1px dashed #cbd5e1;
+            padding: 12px 0;
+        }
+
+        .ticket-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ticket-btns button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-print { background-color: #2563eb; color: white; }
+        .btn-close { background-color: #e2e8f0; color: #334155; }
+                .btn-print { background-color: #2563eb; color: white; }
+        .btn-close { background-color: #e2e8f0; color: #334155; }
+
+        .creditos {
+            text-align: center;
+            margin-top: 32px;
+            padding: 16px;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .creditos strong {
+            color: #94a3b8;
+        }
+        .login-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #0f172a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.login-overlay.hidden { display: none; }
+
+.login-box {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+}
+
+.login-box img { height: 70px; margin-bottom: 12px; border-radius: 14px; }
+.login-box h2 { font-size: 1.2rem; margin-bottom: 4px; }
+.login-box p.sub { color: #94a3b8; font-size: 0.8rem; margin-bottom: 20px; }
+.login-box .form-group { text-align: left; }
+
+.login-error {
+    color: #f87171;
+    font-size: 0.85rem;
+    min-height: 20px;
+    margin-bottom: 8px;
+}
+
+.btn-salir {
+    margin-top: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+.btn-salir:hover { background: rgba(255, 255, 255, 0.25); }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de inicio de sesión -->
+<div id="pantalla-login" class="login-overlay">
+    <div class="login-box">
+        <img src="logo.png.Png" alt="Logo Colegio">
+        <h2>Control de Asistencia</h2>
+        <p class="sub">Ingresa tus credenciales para continuar</p>
+        <form id="form-login">
+            <div class="form-group">
+                <label for="login-usuario">Usuario</label>
+                <input type="text" id="login-usuario" class="form-control" autocomplete="username" required>
+            </div>
+            <div class="form-group">
+                <label for="login-clave">Contraseña</label>
+                <input type="password" id="login-clave" class="form-control" autocomplete="current-password" required>
+            </div>
+            <div id="login-error" class="login-error"></div>
+            <button type="submit" class="btn-submit">Ingresar</button>
+        </form>
+    </div>
+</div>
+    </style>
+</head>
+<body>
+
+    <div class="container" id="app-principal" style="display: none;">
+
+        <!-- Encabezado -->
+        <header>
+            <div>
+                <h1 style="display: flex; align-items: center; gap: 12px;">
+    <img src="logo.png.Png" alt="Logo Colegio" style="height: 45px; width: auto; object-fit: contain; border-radius: 8px;">
+    CONTROL DE ASISTENCIA COLEGIO DE NUESTRA SEÑORA DE LA CANDELARIA (V1.0 BETA)
+    
+    
+</h1>
+            </div>
+            <div class="fecha-badge">
+                <span style="font-size: 0.75rem; color: #bfdbfe; display: block;">Fecha de Hoy</span>
+                <strong id="fecha-actual">--/--/----</strong>
+                <br><button onclick="cerrarSesion()" class="btn-salir">🔒 Cerrar sesión</button>
+            </div>
+        </header>
+
+        <!-- Métricas Rápidas -->
+        <div class="stats-grid">
+            <div class="card-stat">
+                <div class="stat-icon">📊</div>
+                <div>
+                    <div class="stat-title">Total Atrasos Hoy</div>
+                    <div id="stat-total" class="stat-number">0</div>
+                </div>
+            </div>
+            <div class="card-stat">
+                <div class="stat-icon">⏰</div>
+                <div>
+                    <div class="stat-title">Último Ingreso</div>
+                    <div id="stat-ultimo" class="stat-number">--:--</div>
+                </div>
+            </div>
+            <div class="card-stat">
+                <div class="stat-icon">⚠️</div>
+                <div>
+                    <div class="stat-title">Motivo Frecuente</div>
+                    <div id="stat-motivo" class="stat-number" style="font-size: 1.1rem;">N/A</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="main-grid">
+            
+            <!-- Columna Izquierda: Formulario -->
+            <div class="section-box">
+                <div class="section-title">
+                    <span>📝 Registrar Atraso</span>
+                </div>
+                <form id="form-registro">
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Estudiante</label>
+                        <input type="text" id="nombre" class="form-control" placeholder="Ej. Carlos Mendoza" required>
+                    </div>
+                    <div class="form-group">
+                    <label for="grado">Seleccionar Curso</label>
+                    <select id="grado" class="form-control" required>
+    <option value="">Seleccionar Curso...</option>
+    <option value="Preescolar">Preescolar</option>
+    <option value="Primero">Primero</option>
+    <option value="Segundo">Segundo</option>
+    <option value="Tercero">Tercero</option>
+    <option value="Cuarto">Cuarto</option>
+    <option value="Quinto">Quinto</option>
+    <option value="Sexto">Sexto</option>
+    <option value="Séptimo A">Séptimo A</option>
+    <option value="Séptimo B">Séptimo B</option>
+    <option value="Octavo">Octavo</option>
+    <option value="Noveno">Noveno</option>
+    <option value="Décimo A">Décimo A</option>
+    <option value="Décimo B">Décimo B</option>
+    <option value="Undécimo">Undécimo</option>
+</select>
+</div>
+
+                    <div class="form-group">
+                        <label for="motivo">Motivo del Retraso</label>
+                        <select id="motivo" class="form-control" required>
+                            <option value="">Seleccionar Motivo...</option>
+                            <option value="Tráfico / Transporte">Tráfico / Transporte</option>
+                            <option value="Salud / Médico">Salud / Médico</option>
+                            <option value="Calamidad Doméstica">Calamidad Doméstica</option>
+                            <option value="Causa Familiar">Causa Familiar</option>
+                            <option value="Otro">Otro Motivo</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-submit">💾 Registrar</button>
+                </form>
+            </div>
+
+            <!-- Columna Derecha: Tabla -->
+            <div class="section-box">
+                <div class="section-title">
+                    <span>📋 Lista de Atrasados</span>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="exportarCSV()" class="btn-action">📊 Excel</button>
+                        <button onclick="limpiarRegistros()" class="btn-danger">🗑️ Vaciar</button>
+                    </div>
+                </div>
+
+                <div id="contenedor-tabla"></div>
+            </div>
+
+        
+
+        </div>  <!-- cierra main-grid -->
+
+        <!-- Créditos -->
+        <footer class="creditos">
+    <p class="autor">Desarrollado por <strong>Yoiner Cesar Solis Riveira</strong></p>
+    <p class="derechos">© 2026 · Todos los derechos reservados · V1.0 Beta</p>
+</footer>
+
+    </div>  <!-- cierra container -->
+
+    <!-- Ticket Flotante (Pase de Entrada) -->
+    </div>
+
+    
+    <div id="modal-pase" class="modal-overlay hidden">
+        <div class="modal-ticket">
+            <h3>Pase de Entrada</h3>
+            <p style="font-size: 0.75rem; color: #64748b;">Colegio - Control de Asistencia</p>
+            
+            <div class="ticket-info">
+                <p><strong>Estudiante:</strong> <span id="ticket-nombre">--</span></p>
+                <p><strong>Grado:</strong> <span id="ticket-grado">--</span></p>
+                <p><strong>Motivo:</strong> <span id="ticket-motivo">--</span></p>
+                <p><strong>Hora:</strong> <span id="ticket-hora" style="color: #2563eb; font-weight: 800;">--</span></p>
+            </div>
+
+            <p style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 12px;">Entregar este ticket al profesor del aula.</p>
+
+            <div class="ticket-btns">
+                <button onclick="window.print()" class="btn-print">🖨️ Imprimir</button>
+                <button onclick="cerrarModal()" class="btn-close">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Librería con soporte de estilos para Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<script src="app.js"></script>
